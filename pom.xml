@@ -32,6 +32,13 @@
         </dependencies>
     </dependencyManagement>
 
+    <repositories>
+        <repository>
+            <id>woolgens-network</id>
+            <url>https://nexus.woolgens.net/repository/woolgens/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>io.quarkus</groupId>
