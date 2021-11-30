@@ -1,14 +1,11 @@
 package net.woolgens.scaffold.auth;
 
 import io.quarkus.runtime.StartupEvent;
+import lombok.Getter;
 import net.woolgens.library.auth.AuthBootstrap;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.PreMatching;
-import javax.ws.rs.ext.Provider;
-import java.io.IOException;
 
 /**
  * Copyright (c) Maga, All Rights Reserved
@@ -16,9 +13,9 @@ import java.io.IOException;
  * Proprietary and confidential
  * Written by Maga
  **/
-@Provider
-@PreMatching
-public class AuthWrapper implements ContainerRequestFilter {
+@ApplicationScoped
+@Getter
+public class AuthWrapper  {
 
     AuthBootstrap bootstrap;
 
@@ -30,10 +27,4 @@ public class AuthWrapper implements ContainerRequestFilter {
         }
     }
 
-    @Override
-    public void filter(ContainerRequestContext containerRequestContext) throws IOException {
-        if(bootstrap != null) {
-            bootstrap.getProvider().getSecurity().handleQuarkusSecurity(containerRequestContext);
-        }
-    }
 }
