@@ -2,6 +2,7 @@ package net.woolgens.scaffold.auth;
 
 import io.quarkus.runtime.StartupEvent;
 import lombok.Getter;
+import lombok.Setter;
 import net.woolgens.library.auth.AuthBootstrap;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -18,6 +19,9 @@ import javax.enterprise.event.Observes;
 public class AuthWrapper  {
 
     AuthBootstrap bootstrap;
+
+    @Setter
+    boolean enabled = true;
 
     public void onStart(@Observes StartupEvent event) {
         try {

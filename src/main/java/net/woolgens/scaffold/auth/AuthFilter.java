@@ -22,7 +22,7 @@ public class AuthFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
-        if(wrapper.getBootstrap() != null) {
+        if(wrapper.getBootstrap() != null && wrapper.isEnabled()) {
             wrapper.getBootstrap().getProvider().getSecurity().handleQuarkusSecurity(containerRequestContext);
         }
     }
