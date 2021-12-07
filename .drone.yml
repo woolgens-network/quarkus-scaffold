@@ -66,7 +66,7 @@ steps:
         from_secret: SERVER_USER
       password:
         from_secret: SERVER_PASSWORD
-      target: /home/services/revamp/crate-service/app/
+      target: /home/services/revamp/scaffold-service/app/
       source: target/quarkus-app/*
       strip_components: 2
   - name: start
@@ -82,7 +82,7 @@ steps:
       password:
         from_secret: SERVER_PASSWORD
       script:
-        - cd /home/services/revamp/crate-service/
+        - cd /home/services/revamp/scaffold-service/
         - docker-compose down
         - docker-compose up -d --build
 
