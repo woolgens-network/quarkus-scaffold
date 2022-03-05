@@ -17,7 +17,7 @@ steps:
         - id: woolgens-network
           username: woolgens-default
       serverSecrets:
-        from_secret: MAVEN_SERVER_SECRETS
+        from_secret: WOOLGENS_NEXUS_CREDENTIALS
   - name: test
     image: maven
     depends_on: [settings, mongo]
@@ -29,6 +29,8 @@ services:
     image: mongo:4
     ports:
       - 27017
+
+
 ---
 kind: pipeline
 type: docker
@@ -45,28 +47,42 @@ steps:
     image: md5lukas/drone-mvn-settings
     settings:
       servers:
-        - id: woolgens-network
-          username: woolgens-default
+        - id: woolgens
+          username: woolgens
       serverSecrets:
-        from_secret: MAVEN_SERVER_SECRETS
+        from_secret: WOOLGENS_NEXUS_CREDENTIALS
   - name: install
     image: maven
     depends_on: [settings, mongo]
     commands:
       - mvn -U package -s settings.xml
+  - name: delete
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        from_secret: WOOLGENS_SERVER_HOST
+      port:
+        from_secret: WOOLGENS_SERVER_PORT
+      username:
+        from_secret: WOOLGENS_SERVER_USER
+      password:
+        from_secret: WOOLGENS_SERVER_PASSWORD
+      script:
+        - rm -R /home/services/scaffold-service/
+        - cp -r /home/services/template/ /home/services/scaffold-service/
   - name: deploy
-    depends_on: [install]
+    depends_on: [install, delete]
     image: appleboy/drone-scp
     settings:
       host:
-        from_secret: SERVER_HOST
+        from_secret: WOOLGENS_SERVER_HOST
       port:
-        from_secret: SERVER_PORT
+        from_secret: WOOLGENS_SERVER_PORT
       username:
-        from_secret: SERVER_USER
+        from_secret: WOOLGENS_SERVER_USER
       password:
-        from_secret: SERVER_PASSWORD
-      target: /home/services/revamp/scaffold-service/app/
+        from_secret: WOOLGENS_SERVER_PASSWORD
+      target: /home/services/scaffold-service/app/
       source: target/quarkus-app/*
       strip_components: 2
   - name: start
@@ -74,15 +90,18 @@ steps:
     image: appleboy/drone-ssh
     settings:
       host:
-        from_secret: SERVER_HOST
+        from_secret: WOOLGENS_SERVER_HOST
       port:
-        from_secret: SERVER_PORT
+        from_secret: WOOLGENS_SERVER_PORT
       username:
-        from_secret: SERVER_USER
+        from_secret: WOOLGENS_SERVER_USER
       password:
-        from_secret: SERVER_PASSWORD
+        from_secret: WOOLGENS_SERVER_PASSWORD
+      envs:
+        - SERVICE_NAME
       script:
-        - cd /home/services/revamp/scaffold-service/
+        - cd /home/services/scaffold-service/
+        - export SERVICE_NAME=scaffold
         - docker-compose down
         - docker-compose up -d --build
 
