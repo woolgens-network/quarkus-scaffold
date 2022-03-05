@@ -34,8 +34,8 @@
 
     <repositories>
         <repository>
-            <id>woolgens-network</id>
-            <url>https://nexus.woolgens.net/repository/woolgens/</url>
+            <id>woolgens</id>
+            <url>https://nexus.prismar.in/repository/woolgens/</url>
         </repository>
     </repositories>
 
